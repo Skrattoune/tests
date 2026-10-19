@@ -41,7 +41,8 @@ function init() {
     controller2.addEventListener('selectstart', onSelectStart);
     scene.add(controller2);
 
-    const controllerModelFactory = new XRControllerModelFactory();
+    // Controllers are kept purely for tracking/raycasting interaction without rendering models
+    /* const controllerModelFactory = new XRControllerModelFactory();
     
     const controllerGrip1 = renderer.xr.getControllerGrip(0);
     controllerGrip1.add(controllerModelFactory.createControllerModel(controllerGrip1));
@@ -50,14 +51,18 @@ function init() {
     const controllerGrip2 = renderer.xr.getControllerGrip(1);
     controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2));
     scene.add(controllerGrip2);
-
-    // 3D Buttons
-    const actionButton = create3DButton('Click Me', 0x4CAF50, 0, 0, -1.5);
+    */
+    
+    // --- 3D BUTTONS FLOATING AT EYE LEVEL ---
+    
+    // 1. Action Button (Green) - Raised to chest/eye level (y: 1.3)
+    const actionButton = create3DButton('Click Me', 0x4CAF50, 0, 1.3, -1.5);
     scene.add(actionButton);
     actionButton.userData = { onClick: () => alert('Action Button Clicked!') };
     intersectObjects.push(actionButton);
 
-    const exitButton = create3DButton('Exit AR', 0xf44336, 0, -0.35, -1.5);
+    // 2. Exit Button (Red) - Placed just below the action button (y: 0.95)
+    const exitButton = create3DButton('Exit AR', 0xf44336, 0, 0.95, -1.5);
     scene.add(exitButton);
     exitButton.userData = { 
         onClick: () => {
