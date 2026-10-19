@@ -13,7 +13,8 @@ function init() {
     document.body.appendChild(container);
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x202020);
+    // Setting background to null ensures the canvas is transparent over passthrough
+    scene.background = null;
 
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 50);
 
@@ -22,6 +23,7 @@ function init() {
     light.position.set(0.5, 1, 0.25);
     scene.add(light);
 
+    // alpha: true is required for a transparent background canvas
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -50,16 +52,16 @@ function init() {
     controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2));
     scene.add(controllerGrip2);
 
-    // --- 3D BUTTONS IN THE VIRTUAL SCENE ---
+    // --- 3D BUTTONS FLOATING IN PASSTHROUGH SPACE ---
     
     // 1. Action Button (Green)
     const actionButton = create3DButton('Click Me', 0x4CAF50, 0, 0, -1.5);
     scene.add(actionButton);
-    actionButton.userData = { onClick: () => alert('Action Button Clicked in VR!') };
+    actionButton.userData = { onClick: () => alert('Action Button Clicked!') };
     intersectObjects.push(actionButton);
 
-    // 2. Exit VR Button (Red)
-    const exitButton = create3DButton('Exit VR', 0xf44336, 0, -0.35, -1.5);
+    // 2. Exit Button (Red)
+    const exitButton = create3DButton('Exit AR', 0xf44336, 0, -0.35, -1.5);
     scene.add(exitButton);
     exitButton.userData = { 
         onClick: () => {
@@ -69,14 +71,15 @@ function init() {
     };
     intersectObjects.push(exitButton);
 
-    // --- MANUAL HTML BUTTON HANDLER TO ENTER VR ---
+    // --- MANUAL HTML BUTTON HANDLER FOR AR PASSTHROUGH ---
     const enterVrBtn = document.getElementById('enter-vr-btn');
+    enterVrBtn.textContent = 'Enter Transparent AR';
     
     if ('xr' in navigator) {
-        navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+        navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
             if (supported) {
                 enterVrBtn.addEventListener('click', () => {
-                    navigator.xr.requestSession('immersive-vr', { optionalFeatures: ['local-floor'] }).then((session) => {
+                    navigator.xr.requestSession('immersive-ar', { requiredFeatures: ['local-floor'] }).then((session) => {
                         renderer.xr.setSession(session);
                         enterVrBtn.style.display = 'none';
                         
@@ -86,7 +89,7 @@ function init() {
                     });
                 });
             } else {
-                enterVrBtn.textContent = 'VR Not Supported';
+                enterVrBtn.textContent = 'AR Passthrough Not Supported';
                 enterVrBtn.disabled = true;
             }
         });
