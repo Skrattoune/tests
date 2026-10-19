@@ -13,27 +13,26 @@ function init() {
     document.body.appendChild(container);
 
     scene = new THREE.Scene();
-    // Setting background to null ensures the canvas is transparent over passthrough
     scene.background = null;
 
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 50);
 
-    // Light source
     const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 3);
     light.position.set(0.5, 1, 0.25);
     scene.add(light);
 
-    // alpha: true is required for a transparent background canvas
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    
+    // Crucial: Set clear color alpha to 0 for true transparency over passthrough
+    renderer.setClearColor(0x000000, 0);
+    
     renderer.xr.enabled = true;
     container.appendChild(renderer.domElement);
 
-    // Raycaster for controller interactions
     raycaster = new THREE.Raycaster();
 
-    // Setup controllers for interaction
     controller1 = renderer.xr.getController(0);
     controller1.addEventListener('selectstart', onSelectStart);
     scene.add(controller1);
@@ -52,15 +51,12 @@ function init() {
     controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2));
     scene.add(controllerGrip2);
 
-    // --- 3D BUTTONS FLOATING IN PASSTHROUGH SPACE ---
-    
-    // 1. Action Button (Green)
+    // 3D Buttons
     const actionButton = create3DButton('Click Me', 0x4CAF50, 0, 0, -1.5);
     scene.add(actionButton);
     actionButton.userData = { onClick: () => alert('Action Button Clicked!') };
     intersectObjects.push(actionButton);
 
-    // 2. Exit Button (Red)
     const exitButton = create3DButton('Exit AR', 0xf44336, 0, -0.35, -1.5);
     scene.add(exitButton);
     exitButton.userData = { 
@@ -71,7 +67,6 @@ function init() {
     };
     intersectObjects.push(exitButton);
 
-    // --- MANUAL HTML BUTTON HANDLER FOR AR PASSTHROUGH ---
     const enterVrBtn = document.getElementById('enter-vr-btn');
     enterVrBtn.textContent = 'Enter Transparent AR';
     
@@ -102,7 +97,6 @@ function init() {
     renderer.setAnimationLoop(render);
 }
 
-// Helper to generate a 3D button mesh with text texture
 function create3DButton(text, colorHex, x, y, z) {
     const canvas = document.createElement('canvas');
     canvas.width = 512;
@@ -128,7 +122,6 @@ function create3DButton(text, colorHex, x, y, z) {
     return button;
 }
 
-// Handle controller trigger clicks
 function onSelectStart(event) {
     const controller = event.target;
     const tempMatrix = new THREE.Matrix4();
