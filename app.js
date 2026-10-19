@@ -22,6 +22,7 @@ function init() {
     // Setup WebXR AR session with DOM Overlay targeting our HTML container
     const overlayContainer = document.getElementById('overlay-container');
     
+    // Pass the session options directly into the ARButton creator
     document.body.appendChild(ARButton.createButton(renderer, {
         requiredFeatures: ['hit-test'],
         optionalFeatures: ['dom-overlay'],
@@ -41,7 +42,6 @@ function init() {
 
     // Button click logic inside AR
     document.getElementById('action-btn').addEventListener('click', () => {
-        console.log('Button clicked in AR passthrough!');
         alert('Button clicked!');
     });
 
