@@ -3,23 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebXR Transparent Button</title>
+    <title>WebXR 3D Buttons</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- This container will be used as the WebXR DOM Overlay -->
-    <div id="overlay-container">
-        <button id="enter-vr-btn" class="center-btn">Enter AR / Passthrough</button>
-        
-        <!-- Container for buttons shown only while inside VR/AR -->
-        <div id="action-container" style="display: none; flex-direction: column; gap: 15px; align-items: center;">
-            <button id="action-btn" class="center-btn">Click Me</button>
-            <button id="exit-vr-btn" class="exit-btn">Exit VR</button>
-        </div>
-    </div>
-    
-    <!-- Import Three.js via CDN for the WebXR session handling -->
+    <!-- Import Three.js via CDN -->
     <script type="importmap">
         {
             "imports": {
