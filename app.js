@@ -37,7 +37,7 @@ function init() {
     controller2.addEventListener('selectstart', onSelectStart);
     scene.add(controller2);
 
-    // --- 3D BUTTONS FLOATING AT EYE LEVEL ---
+    // --- 3D BUTTONS AT EYE LEVEL ---
     const actionButton = create3DButton('Click Me', 0x4CAF50, 0, 1.3, -1.5);
     scene.add(actionButton);
     actionButton.userData = { onClick: () => alert('Action Button Clicked!') };
@@ -48,11 +48,14 @@ function init() {
     exitButton.userData = { 
         onClick: () => {
             const session = renderer.xr.getSession();
-            if (session) session.end();
+            if (session) {
+                session.end();
+            }
         } 
     };
     intersectObjects.push(exitButton);
 
+    // --- HTML BUTTON HANDLER FOR AR SESSION ---
     const enterVrBtn = document.getElementById('enter-vr-btn');
     enterVrBtn.textContent = 'Enter Transparent AR';
     
@@ -83,21 +86,36 @@ function init() {
     renderer.setAnimationLoop(render);
 }
 
+// Helper to generate 3D button mesh with compatible rounded corners
 function create3DButton(text, colorHex, x, y, z) {
     const canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 128;
-    const context = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
     
-    context.fillStyle = '#' + colorHex.toString(16).padStart(6, '0');
-    context.roundRect(0, 0, 512, 128, 24);
-    context.fill();
+    ctx.fillStyle = '#' + colorHex.toString(16).padStart(6, '0');
+    
+    // Compatible rounded rectangle path drawing
+    const radius = 24;
+    ctx.beginPath();
+    ctx.moveTo(radius, 0);
+    ctx.lineTo(512 - radius, 0);
+    ctx.quadraticCurveTo(512, 0, 512, radius);
+    ctx.lineTo(512, 128 - radius);
+    ctx.quadraticCurveTo(512, 128, 512 - radius, 128);
+    ctx.lineTo(radius, 128);
+    ctx.quadraticCurveTo(0, 128, 0, 128 - radius);
+    ctx.lineTo(0, radius);
+    ctx.quadraticCurveTo(0, 0, radius, 0);
+    ctx.closePath();
+    ctx.fill();
 
-    context.fillStyle = '#ffffff';
-    context.font = 'bold 48px sans-serif';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillText(text, 256, 64);
+    // Draw button text
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 48px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, 256, 64);
 
     const texture = new THREE.CanvasTexture(canvas);
     const geometry = new THREE.PlaneGeometry(0.8, 0.2);
@@ -110,8 +128,6 @@ function create3DButton(text, colorHex, x, y, z) {
 
 function onSelectStart(event) {
     const controller = event.target;
-    
-    // Use Three.js built-in method for WebXR controllers
     raycaster.setFromXRController(controller);
 
     const intersects = raycaster.intersectObjects(intersectObjects);
