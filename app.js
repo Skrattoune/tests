@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js';
 
 let camera, scene, renderer;
@@ -29,9 +28,6 @@ function init() {
     renderer.xr.enabled = true;
     container.appendChild(renderer.domElement);
 
-    // Add standard VR Entry Button
-    document.body.appendChild(VRButton.createButton(renderer));
-
     // Raycaster for controller interactions
     raycaster = new THREE.Raycaster();
 
@@ -54,7 +50,7 @@ function init() {
     controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2));
     scene.add(controllerGrip2);
 
-    // --- CREATE 3D BUTTONS IN THE VIRTUAL SCENE ---
+    // --- 3D BUTTONS IN THE VIRTUAL SCENE ---
     
     // 1. Action Button (Green)
     const actionButton = create3DButton('Click Me', 0x4CAF50, 0, 0, -1.5);
@@ -73,6 +69,32 @@ function init() {
     };
     intersectObjects.push(exitButton);
 
+    // --- MANUAL HTML BUTTON HANDLER TO ENTER VR ---
+    const enterVrBtn = document.getElementById('enter-vr-btn');
+    
+    if ('xr' in navigator) {
+        navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+            if (supported) {
+                enterVrBtn.addEventListener('click', () => {
+                    navigator.xr.requestSession('immersive-vr', { optionalFeatures: ['local-floor'] }).then((session) => {
+                        renderer.xr.setSession(session);
+                        enterVrBtn.style.display = 'none';
+                        
+                        session.addEventListener('end', () => {
+                            enterVrBtn.style.display = 'block';
+                        });
+                    });
+                });
+            } else {
+                enterVrBtn.textContent = 'VR Not Supported';
+                enterVrBtn.disabled = true;
+            }
+        });
+    } else {
+        enterVrBtn.textContent = 'WebXR Not Available';
+        enterVrBtn.disabled = true;
+    }
+
     window.addEventListener('resize', onWindowResize);
     renderer.setAnimationLoop(render);
 }
@@ -84,12 +106,10 @@ function create3DButton(text, colorHex, x, y, z) {
     canvas.height = 128;
     const context = canvas.getContext('2d');
     
-    // Draw background
     context.fillStyle = '#' + colorHex.toString(16).padStart(6, '0');
     context.roundRect(0, 0, 512, 128, 24);
     context.fill();
 
-    // Draw text
     context.fillStyle = '#ffffff';
     context.font = 'bold 48px sans-serif';
     context.textAlign = 'center';
@@ -108,8 +128,6 @@ function create3DButton(text, colorHex, x, y, z) {
 // Handle controller trigger clicks
 function onSelectStart(event) {
     const controller = event.target;
-    
-    // Create a temporary matrix for controller raycasting
     const tempMatrix = new THREE.Matrix4();
     tempMatrix.identity().extractRotation(controller.matrixWorld);
     
