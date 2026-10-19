@@ -4,54 +4,22 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: transparent;
+    background: #111;
 }
 
-#overlay-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    pointer-events: none; /* Allows clicks to pass through empty space */
-}
-
-#action-container {
-    display: flex;
-    pointer-events: none;
-}
-
-.center-btn, .exit-btn {
-    pointer-events: auto; /* Re-enables clicks for buttons */
-    font-size: 18px;
-    font-weight: bold;
-    padding: 16px 32px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.center-btn {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.center-btn:hover {
-    background-color: #45a049;
-}
-
-.exit-btn {
-    background-color: #f44336;
-    color: white;
-}
-
-.exit-btn:hover {
-    background-color: #d32f2f;
-}
-
-.center-btn:active, .exit-btn:active {
-    transform: scale(0.98);
+/* The default WebXR entry button styling handled by Three.js */
+#XRButton {
+    position: absolute !important;
+    bottom: 20px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    padding: 16px 32px !important;
+    border: none !important;
+    border-radius: 12px !important;
+    background: #4CAF50 !important;
+    color: white !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
