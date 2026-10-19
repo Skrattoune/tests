@@ -13,19 +13,23 @@ function init() {
 
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
 
+    // Add a light source so the scene initializes correctly
+    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 3);
+    light.position.set(0.5, 1, 0.25);
+    scene.add(light);
+
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.xr.enabled = true;
     container.appendChild(renderer.domElement);
 
-    // Setup WebXR AR session with DOM Overlay targeting our HTML container
+    // Setup WebXR AR session with explicit DOM overlay options
     const overlayContainer = document.getElementById('overlay-container');
     
-    // Pass the session options directly into the ARButton creator
     document.body.appendChild(ARButton.createButton(renderer, {
         requiredFeatures: ['hit-test'],
-        optionalFeatures: ['dom-overlay'],
+        optionalFeatures: ['dom-overlay', 'dom-overlay-for-handheld-ar'],
         domOverlay: { root: overlayContainer }
     }));
 
