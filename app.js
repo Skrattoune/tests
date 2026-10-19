@@ -56,13 +56,14 @@ function init() {
     // --- 3D BUTTONS FLOATING AT EYE LEVEL ---
     
     // 1. Action Button (Green) - Raised to chest/eye level (y: 1.3)
-    const actionButton = create3DButton('Click Me', 0x4CAF50, 0, 1.3, -1.5);
+    const actionButton = create3DButton('Click Me', 0x4CAF50, 0, 1.3, 0);
+    // 0, 1.3, -1.5 means on the right side
     scene.add(actionButton);
     actionButton.userData = { onClick: () => alert('Action Button Clicked!') };
     intersectObjects.push(actionButton);
 
     // 2. Exit Button (Red) - Placed just below the action button (y: 0.95)
-    const exitButton = create3DButton('Exit AR', 0xf44336, 0, 0.95, -1.5);
+    const exitButton = create3DButton('Exit AR', 0xf44336, 0, 0.95, 0);
     scene.add(exitButton);
     exitButton.userData = { 
         onClick: () => {
@@ -129,12 +130,16 @@ function create3DButton(text, colorHex, x, y, z) {
 
 function onSelectStart(event) {
     const controller = event.target;
-    const tempMatrix = new THREE.Matrix4();
+    /* const tempMatrix = new THREE.Matrix4();
     tempMatrix.identity().extractRotation(controller.matrixWorld);
     
     raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
     raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+    */
+    // Use Three.js built-in method for WebXR controllers
+    raycaster.setFromXRController(controller);
 
+    const intersects = raycaster.intersectObjects(intersectObjects);
     const intersects = raycaster.intersectObjects(intersectObjects);
 
     if (intersects.length > 0) {
