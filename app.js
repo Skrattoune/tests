@@ -13,7 +13,7 @@ function init() {
 
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
 
-    // Add a light source so the scene initializes correctly
+    // Add a basic light source
     const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 3);
     light.position.set(0.5, 1, 0.25);
     scene.add(light);
@@ -24,7 +24,7 @@ function init() {
     renderer.xr.enabled = true;
     container.appendChild(renderer.domElement);
 
-    // Setup WebXR AR session with explicit DOM overlay options
+    // Setup WebXR AR session with DOM Overlay
     const overlayContainer = document.getElementById('overlay-container');
     
     document.body.appendChild(ARButton.createButton(renderer, {
@@ -36,17 +36,25 @@ function init() {
     // Handle UI switching when entering/exiting XR
     renderer.xr.addEventListener('sessionstart', () => {
         document.getElementById('enter-vr-btn').style.display = 'none';
-        document.getElementById('action-btn').style.display = 'block';
+        document.getElementById('action-container').style.display = 'flex';
     });
 
     renderer.xr.addEventListener('sessionend', () => {
         document.getElementById('enter-vr-btn').style.display = 'block';
-        document.getElementById('action-btn').style.display = 'none';
+        document.getElementById('action-container').style.display = 'none';
     });
 
-    // Button click logic inside AR
+    // Action button click logic inside AR
     document.getElementById('action-btn').addEventListener('click', () => {
         alert('Button clicked!');
+    });
+
+    // Exit VR button click logic
+    document.getElementById('exit-vr-btn').addEventListener('click', () => {
+        const session = renderer.xr.getSession();
+        if (session) {
+            session.end();
+        }
     });
 
     window.addEventListener('resize', onWindowResize);
