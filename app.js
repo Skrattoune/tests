@@ -56,14 +56,14 @@ function init() {
     // --- 3D BUTTONS FLOATING AT EYE LEVEL ---
     
     // 1. Action Button (Green) - Raised to chest/eye level (y: 1.3)
-    const actionButton = create3DButton('Click Me', 0x4CAF50, 0, 1.3, 0);
+    const actionButton = create3DButton('Click Me', 0x4CAF50, 0, 1.3, -1.5);
     // 0, 1.3, -1.5 means on the right side
     scene.add(actionButton);
     actionButton.userData = { onClick: () => alert('Action Button Clicked!') };
     intersectObjects.push(actionButton);
 
     // 2. Exit Button (Red) - Placed just below the action button (y: 0.95)
-    const exitButton = create3DButton('Exit AR', 0xf44336, 0, 0.95, 0);
+    const exitButton = create3DButton('Exit AR', 0xf44336, 0, 0.95, -1.5);
     scene.add(exitButton);
     exitButton.userData = { 
         onClick: () => {
